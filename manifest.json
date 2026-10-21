@@ -1,0 +1,20 @@
+
+{
+  "name": "Kleding passen en ruilen",
+  "short_name": "Kleding",
+  "description": "Nederlands oefenen: kleding passen en ruilen in de winkel",
+  "lang": "nl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4eee5",
+  "theme_color": "#f4eee5",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

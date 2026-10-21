@@ -1,0 +1,300 @@
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f4eee5">
+<title>Kleding passen en ruilen</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root { --bg:#f4eee5; --card:#fffdf9; --ink:#263238; --accent:#386b59; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font-family:Arial,sans-serif; }
+header { padding:22px 16px 12px; text-align:center; }
+h1 { font-size:clamp(25px,5vw,36px); margin:0 0 8px; }
+header p { margin:0; }
+main { max-width:1000px; margin:auto; padding:12px; }
+.layout { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr)); gap:16px; }
+.card { background:var(--card); padding:18px; border-radius:18px; box-shadow:0 3px 14px #0000000c; }
+h2 { font-size:21px; margin:0 0 14px; }
+label { display:block; font-weight:bold; margin:13px 0 6px; }
+select,button { font:inherit; }
+select { width:100%; padding:12px; border:1px solid #aab5ae; border-radius:10px; background:white; color:var(--ink); }
+button { padding:12px 16px; border:0; border-radius:10px; cursor:pointer; font-weight:bold; }
+.primary { background:var(--accent); color:white; }
+.secondary { background:#e6eee8; color:#204537; }
+.buttons { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+.avatar-wrap { text-align:center; background:#edf2ec; border-radius:15px; padding:10px; }
+#avatar { width:100%; max-width:300px; height:300px; }
+.tip { background:#fff2c8; padding:12px; border-radius:10px; line-height:1.5; }
+.result { min-height:55px; margin-top:14px; padding:12px; border-radius:10px; background:#edf2ec; line-height:1.5; }
+#qr { max-width:180px; width:100%; display:block; margin:12px auto; }
+.small { font-size:14px; line-height:1.5; }
+footer { text-align:center; padding:22px; font-size:13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>👕 Kleding passen en ruilen</h1>
+  <p>Wat is het probleem met de kleding?</p>
+</header>
+
+<main>
+<div class="layout">
+<section class="card">
+  <h2>1. Kies de kleding</h2>
+
+  <label for="gender">De persoon</label>
+  <select id="gender">
+    <option value="vrouw">Een vrouw</option>
+    <option value="man">Een man</option>
+  </select>
+
+  <label for="item">Het kledingstuk</label>
+  <select id="item">
+    <option value="tshirt">Het T-shirt</option>
+    <option value="trui">De trui</option>
+    <option value="broek">De broek</option>
+    <option value="jas">De jas</option>
+    <option value="rok">De rok</option>
+    <option value="jurk">De jurk</option>
+  </select>
+
+  <label for="color">De kleur</label>
+  <select id="color">
+    <option value="#e76f51">Rood</option>
+    <option value="#3978bd">Blauw</option>
+    <option value="#4d8b61">Groen</option>
+    <option value="#e5c542">Geel</option>
+    <option value="#8a64ad">Paars</option>
+    <option value="#f5f0e6">Wit</option>
+    <option value="#424b55">Zwart</option>
+    <option value="#ed91ad">Roze</option>
+  </select>
+
+  <label for="problem">Het probleem</label>
+  <select id="problem">
+    <option value="klein">De kleding is te klein.</option>
+    <option value="groot">De kleding is te groot.</option>
+    <option value="smal">De kleding is te smal.</option>
+    <option value="wijd">De kleding is te wijd.</option>
+    <option value="kort">De mouwen zijn te kort.</option>
+    <option value="lang">De mouwen zijn te lang.</option>
+    <option value="kleur">De kleur is niet mooi.</option>
+  </select>
+
+  <div class="buttons">
+    <button class="primary" id="showProblem">Toon het probleem</button>
+    <button class="secondary" id="hideProblem">Verberg het antwoord</button>
+  </div>
+</section>
+
+<section class="card">
+  <h2>2. Bekijk de avatar</h2>
+  <div class="avatar-wrap">
+    <svg id="avatar" viewBox="0 0 240 300" role="img" aria-label="Avatar met kleding"></svg>
+  </div>
+  <p class="small">Laat je klasgenoot kijken. Hij of zij mag het antwoord niet zien!</p>
+  <div class="result" id="answer" aria-live="polite">Kies kleding en druk op ‘Verberg het antwoord’ om te spelen.</div>
+</section>
+
+<section class="card">
+  <h2>3. Raad het probleem</h2>
+  <p>Wat is er mis met de kleding?</p>
+  <label for="guess">Kies een antwoord</label>
+  <select id="guess">
+    <option value="">Kies een antwoord…</option>
+    <option value="klein">De kleding is te klein.</option>
+    <option value="groot">De kleding is te groot.</option>
+    <option value="smal">De kleding is te smal.</option>
+    <option value="wijd">De kleding is te wijd.</option>
+    <option value="kort">De mouwen zijn te kort.</option>
+    <option value="lang">De mouwen zijn te lang.</option>
+    <option value="kleur">De kleur is niet mooi.</option>
+  </select>
+  <div class="buttons">
+    <button class="primary" id="check">Controleer mijn antwoord</button>
+    <button class="secondary" id="newRound">Nieuw raadspel</button>
+  </div>
+  <div class="result" id="feedback" aria-live="polite">Kies je antwoord en controleer het.</div>
+</section>
+
+<section class="card">
+  <h2>4. Wat zeg je in de winkel?</h2>
+  <div class="tip">
+    <p><strong>Klant:</strong> Goedemiddag. Ik wil deze trui graag ruilen.</p>
+    <p><strong>Verkoper:</strong> Wat is het probleem?</p>
+    <p><strong>Klant:</strong> De trui is te klein.</p>
+    <p><strong>Verkoper:</strong> Welke maat wilt u?</p>
+    <p><strong>Klant:</strong> Heeft u een grotere maat?</p>
+  </div>
+  <button class="secondary" id="randomSentence">Oefen een andere zin</button>
+  <div class="result" id="sentence">Ik wil deze kleding graag ruilen.</div>
+</section>
+
+<section class="card">
+  <h2>5. Open de app op een andere gsm</h2>
+  <p class="small">Zet de app eerst online. Daarna verschijnt hier een QR-code die naar deze app verwijst.</p>
+  <div id="qrArea" class="small">De QR-code verschijnt als de app online staat.</div>
+</section>
+</div>
+</main>
+
+<footer>NT1 / NT2 · Nederlands oefenen · Kleding in de winkel</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+const problemWords = {
+  klein: "De kleding is te klein.",
+  groot: "De kleding is te groot.",
+  smal: "De kleding is te smal.",
+  wijd: "De kleding is te wijd.",
+  kort: "De mouwen zijn te kort.",
+  lang: "De mouwen zijn te lang.",
+  kleur: "De kleur is niet mooi."
+};
+
+function drawAvatar() {
+  const gender = $("gender").value;
+  const item = $("item").value;
+  const color = $("color").value;
+  const p = $("problem").value;
+
+  let width = 70, sleeve = 34, bodyColor = color;
+  if (p === "klein" || p === "smal") width = 53;
+  if (p === "groot" || p === "wijd") width = 88;
+  if (p === "kort") sleeve = 18;
+  if (p === "lang") sleeve = 49;
+  if (p === "kleur") bodyColor = "#b7b7b7";
+
+  const hair = gender === "vrouw"
+    ? `<path d="M91 56 Q82 20 120 20 Q158 20 149 60 L145 104 L95 104 Z" fill="#5a3928"/>`
+    : `<path d="M94 52 Q93 20 120 20 Q148 20 146 52 L139 42 Q120 32 101 43 Z" fill="#4b3427"/>`;
+
+  let clothes = "";
+  const top = `<path d="M${120-width/2} 103 L${120-width/2-15} 116 L${120-width/2-15} ${116+sleeve} L${120-width/2} ${116+sleeve} L${120-width/2+4} 135 L${120-width/2+4} 174 Q120 184 ${120+width/2-4} 174 L${120+width/2-4} 135 L${120+width/2} ${116+sleeve} L${120+width/2+15} ${116+sleeve} L${120+width/2+15} 116 L${120+width/2} 103 Z" fill="${bodyColor}" stroke="#333" stroke-width="1.5"/>`;
+
+  const legs = `<path d="M94 190 L116 190 L113 267 L94 267 Z M124 190 L146 190 L146 267 L127 267 Z" fill="#42658a" stroke="#333" stroke-width="1.5"/>`;
+  const skirt = `<path d="M91 181 L149 181 L161 240 L79 240 Z" fill="${bodyColor}" stroke="#333" stroke-width="1.5"/>`;
+  const dress = `<path d="M102 103 L138 103 L148 138 L168 229 L72 229 L92 138 Z" fill="${bodyColor}" stroke="#333" stroke-width="1.5"/>`;
+
+  if (item === "broek") {
+    clothes = `<path d="M88 104 L152 104 L149 188 L128 188 L120 140 L112 188 L91 188 Z" fill="${color}" stroke="#333" stroke-width="1.5"/>` +
+      `<path d="M93 188 L116 188 L112 270 L91 270 Z M124 188 L147 188 L147 270 L126 270 Z" fill="#42658a" stroke="#333" stroke-width="1.5"/>`;
+  } else if (item === "rok") {
+    clothes = top + skirt;
+  } else if (item === "jurk") {
+    clothes = dress;
+  } else if (item === "jas") {
+    clothes = `<path d="M102 102 L83 110 L70 155 L91 164 L98 139 L94 190 L146 190 L142 139 L149 164 L170 155 L157 110 L138 102 L120 117 Z" fill="${bodyColor}" stroke="#333" stroke-width="1.5"/><path d="M120 117 L120 190" stroke="#333" stroke-width="2"/>`;
+  } else {
+    clothes = top;
+  }
+
+  $("avatar").innerHTML = `
+    <ellipse cx="120" cy="284" rx="55" ry="7" fill="#d5ded4"/>
+    <path d="M103 77 L103 105 L137 105 L137 77" fill="#d99b73"/>
+    ${hair}
+    <circle cx="120" cy="59" r="27" fill="#e4b08a" stroke="#6c4937" stroke-width="1"/>
+    <circle cx="110" cy="59" r="2.5" fill="#333"/>
+    <circle cx="130" cy="59" r="2.5" fill="#333"/>
+    <path d="M112 72 Q120 78 128 72" fill="none" stroke="#854b42" stroke-width="2" stroke-linecap="round"/>
+    ${clothes}
+    <path d="M93 267 L113 267 L113 278 L86 278 Q81 273 93 267 Z M127 267 L147 267 L154 278 L127 278 Z" fill="#444" stroke="#333"/>
+  `;
+
+  // Laat het kledingstuk en het gekozen probleem duidelijk verschillen.
+  if (p === "klein" || p === "smal") {
+    $("avatar").innerHTML += `<path d="M82 131 L94 141 M158 131 L146 141" stroke="#c23d30" stroke-width="3" stroke-linecap="round"/>`;
+  } else if (p === "groot" || p === "wijd") {
+    $("avatar").innerHTML += `<path d="M72 127 L61 127 M168 127 L179 127" stroke="#267b57" stroke-width="3" stroke-linecap="round"/>`;
+  } else if (p === "kort") {
+    $("avatar").innerHTML += `<path d="M77 134 L66 134 M163 134 L174 134" stroke="#c23d30" stroke-width="3" stroke-linecap="round"/>`;
+  } else if (p === "lang") {
+    $("avatar").innerHTML += `<path d="M77 158 L66 158 M163 158 L174 158" stroke="#267b57" stroke-width="3" stroke-linecap="round"/>`;
+  }
+}
+
+function hideAnswer() {
+  $("answer").textContent = "Niet verklappen! Laat je klasgenoot raden.";
+  $("feedback").textContent = "Wat denk jij? Kies het juiste antwoord.";
+}
+
+function showProblem() {
+  $("answer").textContent = "Het probleem: " + problemWords[$("problem").value];
+}
+
+function checkGuess() {
+  const correct = $("problem").value;
+  const guess = $("guess").value;
+  if (!guess) {
+    $("feedback").textContent = "Kies eerst een antwoord.";
+  } else if (guess === correct) {
+    $("feedback").textContent = "Goed gedaan! " + problemWords[correct];
+  } else {
+    $("feedback").textContent = "Nog niet juist. Probeer opnieuw!";
+  }
+}
+
+function newRound() {
+  const problems = Object.keys(problemWords);
+  const items = ["tshirt","trui","broek","jas","rok","jurk"];
+  const colors = ["#e76f51","#3978bd","#4d8b61","#e5c542","#8a64ad","#f5f0e6","#424b55","#ed91ad"];
+  $("problem").value = problems[Math.floor(Math.random()*problems.length)];
+  $("item").value = items[Math.floor(Math.random()*items.length)];
+  $("color").value = colors[Math.floor(Math.random()*colors.length)];
+  $("gender").value = Math.random() < .5 ? "vrouw" : "man";
+  $("guess").value = "";
+  drawAvatar();
+  hideAnswer();
+}
+
+["gender","item","color","problem"].forEach(id => $(id).addEventListener("change", drawAvatar));
+$("showProblem").addEventListener("click", showProblem);
+$("hideProblem").addEventListener("click", hideAnswer);
+$("check").addEventListener("click", checkGuess);
+$("newRound").addEventListener("click", newRound);
+
+const sentences = [
+  "Ik wil deze kleding graag ruilen.",
+  "Deze broek is te lang.",
+  "Deze trui is te klein.",
+  "Heeft u een grotere maat?",
+  "Heeft u deze trui in het blauw?",
+  "De mouwen zijn te kort.",
+  "Ik vind deze kleur niet mooi."
+];
+$("randomSentence").addEventListener("click", () => {
+  $("sentence").textContent = sentences[Math.floor(Math.random()*sentences.length)];
+});
+
+function showQR() {
+  const area = $("qrArea");
+  if (location.protocol === "https:" && location.hostname) {
+    const url = encodeURIComponent(location.href);
+    const img = document.createElement("img");
+    img.id = "qr";
+    img.alt = "QR-code om de kleding-app te openen";
+    img.src = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + url;
+    area.replaceChildren(img);
+    const link = document.createElement("a");
+    link.href = location.href;
+    link.textContent = "Open de app";
+    area.appendChild(link);
+  } else {
+    area.textContent = "De QR-code verschijnt automatisch nadat je de app online hebt gezet met HTTPS.";
+  }
+}
+drawAvatar();
+hideAnswer();
+showQR();
+
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
